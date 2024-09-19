@@ -1,0 +1,17 @@
+
+
+{
+    "builds": [{
+        "src": "/MedCom/MedCom/wsgi.py",
+        "use": "@ardnt/vercel-python-wsgi",
+        "config": {
+            "runtime": "python3.9", 
+            "maxLambdaSize": "15mb" }
+    }],
+    "routes": [
+        {
+            "src": "/(.*)",
+            "dest": "/MedCom/manage.py"
+        }
+    ]
+}
