@@ -1,0 +1,7 @@
+# virtual environment directories
+bin
+include
+lib
+lib64
+pyvenv.cfg
+env
