@@ -28,7 +28,7 @@ jobs:
       run: ls -R
     - name: Run Tests
       run: |
-        python manage.py test
+        python 'MedCom/manage.py' test
       working-directory: .  # Adjust this if manage.py is not in the root
     - name: Collect Static Files
       run: python manage.py collectstatic --noinput
