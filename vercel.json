@@ -1,0 +1,22 @@
+{
+    "builds": [{
+      "src": "MedCom/MedCom/wsgi.py",
+      "use": "@vercel/python",
+      "config": {
+        "runtime": "python3.9",
+        "maxLambdaSize": "15mb"
+      }
+    }],
+    "routes": [
+      {
+        "src": "/(.*)",
+        "dest": "MedCom/MedCom/wsgi.py"
+      }
+    
+    
+    ],
+  
+    "buildCommand": "python manage.py collectstatic --noinput"
+  }
+
+  

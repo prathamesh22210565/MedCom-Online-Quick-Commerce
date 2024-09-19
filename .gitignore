@@ -1,0 +1,10 @@
+# # virtual environment directories
+# bin
+# include
+# lib
+# lib64
+# pyvenv.cfg
+env
+.vercel
+node_modules
+.env
