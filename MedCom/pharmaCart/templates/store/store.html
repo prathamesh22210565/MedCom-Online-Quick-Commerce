@@ -2,7 +2,21 @@
 {% extends 'store/main.html' %}
 {% load static %}
 {% block content %}
-	<div class="row">
+<div id="backFace">
+	<span class="logo">Your trusted online pharmacy for quick and reliable services</span>
+	<span id="sideImage">
+	<img src="{% static 'images/side.png' %}" alt="" srcset="" >
+	</span>
+	     	
+</div>
+<div class="checkStore">
+	<a href="#storeItems"class="btn btn-warning">Check Store</a>
+</div>
+
+<!-- <img src="{% static 'images/background.jpg' %}" alt="" srcset="" id="backFace"> -->
+
+<section id="storeItems">
+	<div class="row" >
 		{% for product in products %}
 		<div class="col-lg-4">
 			<img class="thumbnail" src="{{product.imageURL}}">
@@ -19,5 +33,5 @@
 		</div>
 		{% endfor %}
 	</div>
-
+</section>
 {% endblock content %}
