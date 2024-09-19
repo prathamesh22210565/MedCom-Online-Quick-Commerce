@@ -23,9 +23,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-()oq^@+88^fe3(bo^0_7uf9l5ldbgfsg_z++$3_k_n5nok#-e('
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['https://medcom-kappa.vercel.app/','.vercel.app'] # Allow *.vercel.app
+ALLOWED_HOSTS = ['https://medcom-kappa.vercel.app/','.vercel.app', '*'] # Allow *.vercel.app
 
 DATABASES = {}
 
