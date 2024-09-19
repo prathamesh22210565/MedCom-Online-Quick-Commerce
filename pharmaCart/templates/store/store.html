@@ -1,0 +1,37 @@
+
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+<div id="backFace">
+	<span class="logo">Your trusted online pharmacy for quick and reliable services</span>
+	<span id="sideImage">
+	<img src="{% static 'images/side.png' %}" alt="" srcset="" >
+	</span>
+	     	
+</div>
+<div class="checkStore">
+	<a href="#storeItems"class="btn btn-warning">Check Store</a>
+</div>
+
+<!-- <img src="{% static 'images/background.jpg' %}" alt="" srcset="" id="backFace"> -->
+
+<section id="storeItems">
+	<div class="row" >
+		{% for product in products %}
+		<div class="col-lg-4">
+			<img class="thumbnail" src="{{product.imageURL}}">
+			<div class="box-element product">
+				<h6><strong>{{product.name}}</strong></h6>
+				<hr>
+
+				<button data-product="{{product.id}}" data-action="add" class="btn btn-outline-secondary add-btn update-cart">Add to Cart</button>
+				
+				<a class="btn btn-outline-success" href="#">View</a>
+				<h4 style="display: inline-block; float: right"><strong>Rs.{{product.price}}</strong></h4>
+
+			</div>
+		</div>
+		{% endfor %}
+	</div>
+</section>
+{% endblock content %}
