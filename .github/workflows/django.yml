@@ -24,9 +24,15 @@ jobs:
       run: |
         python -m pip install --upgrade pip
         pip install -r requirements.txt
+    - name: List directory contents
+      run: ls -R
     - name: Run Tests
       run: |
         python manage.py test
+      working-directory: ./MedCom/  # Adjust this if manage.py is not in the root
+    - name: Collect Static Files
+      run: python manage.py collectstatic --noinput
+      working-directory: .  # Adjust this if manage.py is not in the root
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
