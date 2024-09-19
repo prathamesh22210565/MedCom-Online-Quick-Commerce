@@ -30,9 +30,9 @@ jobs:
       run: |
         python manage.py test
       working-directory: ./MedCom  # Adjust this if manage.py is not in the root
-    - name: Collect static files
-      run: python manage.py collectstatic --noinput
-      working-directory: .  # Adjust this if manage.py is not in the root
+    # - name: Collect static files
+    #   run: python manage.py collectstatic --noinput
+    #   working-directory: .  # Adjust this if manage.py is not in the root
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
