@@ -1,0 +1,90 @@
+{% extends 'store/main.html' %}
+{% load static %}
+{% block content %}
+
+  <form id="prescription-form" action="" method="post">
+    {% csrf_token %}
+    <div class="upload">
+      <label for="presc">Upload Prescription:</label>
+      <input type="file" id="presc">
+    </div>
+    <button type="submit" id="submit-btn" disabled>Submit</button> <!-- Disabled initially -->
+  </form>
+
+  <div id="preview-container" style="margin-top: 20px; display: flex; justify-content: space-between;">
+    <div>
+      <h3>Preview of Uploaded Image:</h3>
+      <img id="image-preview" style="display:none; max-width: 300px; height: auto;" alt="No image uploaded yet" />
+    </div>
+    <div>
+      <h3>Image Data (Base64 String):</h3>
+      <textarea id="image-data" rows="10" cols="50" readonly></textarea>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('presc').addEventListener('change', function(event) {
+        const file = event.target.files[0]; // Get the selected file
+    
+        if (file && file.type.startsWith('image/')) { // Check if the file is an image
+            const reader = new FileReader();
+    
+            reader.onload = function(e) {
+                // Convert the image to base64 string
+                const base64Image = e.target.result;
+    
+                // Show the image preview
+                const previewImage = document.getElementById('image-preview');
+                previewImage.src = base64Image;
+                previewImage.style.display = 'block';
+    
+                // Display the base64 string in the textarea
+                const imageDataTextarea = document.getElementById('image-data');
+                imageDataTextarea.value = base64Image;
+    
+                // Enable the submit button once the image is processed
+                document.getElementById('submit-btn').disabled = false;
+            };
+    
+            // Read the file as a data URL (base64)
+            reader.readAsDataURL(file);
+        } else {
+            alert('Please upload a valid image file.');
+            document.getElementById('submit-btn').disabled = true; // Disable the submit button if invalid file
+        }
+    });
+    
+    // Handle form submission
+    document.getElementById('prescription-form').addEventListener('submit', function(event) {
+        event.preventDefault(); // Prevent the form from submitting the traditional way
+    
+        // Get the base64 string from the textarea
+        const base64ImageData = document.getElementById('image-data').value;
+    
+        if (base64ImageData) {
+            // Example: send the base64 data via fetch API (replace the URL with your actual API endpoint)
+            fetch('/your-api-endpoint/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value  // Include CSRF token
+                },
+                body: JSON.stringify({
+                    image_data: base64ImageData
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                alert('Image uploaded successfully!');
+            })
+            .catch(error => {
+                console.error('Error uploading image:', error);
+                alert('Error uploading image.');
+            });
+        } else {
+            alert('Please upload an image before submitting.');
+        }
+    });
+    </script>
+
+{% endblock content %}

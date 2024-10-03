@@ -90,3 +90,6 @@ def processOrder(request):
 		)
 
 	return JsonResponse('Payment submitted..', safe=False)
+
+def	prescription(request):
+	return render(request, 'store/prescription.html')
