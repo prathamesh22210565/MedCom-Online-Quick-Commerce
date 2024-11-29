@@ -113,7 +113,7 @@ def upload_image(request):
             return JsonResponse({"error": "No image data provided"}, status=400)
 
         # Send the base64 data to your external API
-        external_api_url = 'https://d202-34-125-241-107.ngrok-free.app/'
+        external_api_url = 'https://4618-34-74-135-60.ngrok-free.app/ocr'
 
         # Forward the request to the external API
         response = requests.post(
@@ -134,43 +134,6 @@ def upload_image(request):
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
 
-def upload_image_to_ngrok(request):
-    if request.method == 'POST':
-        # Check if an image is included in the request
-        if 'image' not in request.FILES:
-            return JsonResponse({"error": "No image file provided"}, status=400)
-
-        # Read the uploaded image file
-        image_file = request.FILES['image'].read()
-
-        # Convert the image to Base64
-        image_base64 = base64.b64encode(image_file).decode('utf-8')
-
-        # Prepare the JSON payload with Base64-encoded image
-        payload = {
-            "image_base64": image_base64
-        }
-
-        # Ngrok API URL (replace with the actual URL from your Flask app)
-        ngrok_api_url = "https://d202-34-125-241-107.ngrok-free.app/"
-
-        try:
-            # Send POST request to the Flask API
-            response = requests.post(ngrok_api_url, json=payload)
-
-            # Check for a successful response
-            if response.status_code == 200:
-                # Extract the medicines from the response JSON
-                data = response.json()
-                medicines = data.get('medicines', 'No medicines found')
-                return JsonResponse({"medicines": medicines}, status=200)
-            else:
-                return JsonResponse({"error": "Failed to retrieve medicines"}, status=response.status_code)
-
-        except requests.exceptions.RequestException as e:
-            return JsonResponse({"error": str(e)}, status=500)
-    
-    return JsonResponse({"error": "Invalid request method"}, status=405)
 
 
 import requests
@@ -191,7 +154,7 @@ def upload_image_to_flask(request):
    
         files = {'image': image_file}
 
-        ngrok_api_url = "https://c1eb-34-125-97-60.ngrok-free.app/upload"
+        ngrok_api_url = "https://dc5e-34-74-135-60.ngrok-free.app/ocr"
 
         try:
             # Send POST request to the Flask API with the image file
@@ -200,8 +163,8 @@ def upload_image_to_flask(request):
             # Check for a successful response
             if response.status_code == 200:
                 data = response.json()
-                medicines = data.get('medicines', 'No medicines found')
-                return JsonResponse({"medicines": medicines}, status=200)
+                # medicines = data.get('medicines', 'No medicines found')
+                return JsonResponse({"medicines": data}, status=200)
             else:
                 return JsonResponse({"error": "Failed to retrieve medicines"}, status=response.status_code)
 

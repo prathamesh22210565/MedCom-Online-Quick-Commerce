@@ -84,50 +84,56 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        const form = document.getElementById('imageUploadForm');
-        const imageInput = document.getElementById('imageInput');
-        const responseMessage = document.getElementById('responseMessage');
+    const form = document.getElementById('imageUploadForm');
+    const imageInput = document.getElementById('imageInput');
+    const responseMessage = document.getElementById('responseMessage');
 
-        form.addEventListener('submit', async function(event) {
-            event.preventDefault();  
+    form.addEventListener('submit', async function(event) {
+        event.preventDefault();  
 
-      
-            if (!imageInput.files.length) {
-                responseMessage.innerText = 'Please select an image.';
-                return;
-            }
+        // Check if an image is selected
+        if (!imageInput.files.length) {
+            responseMessage.innerText = 'Please select an image.';
+            return;
+        }
 
-       
-            const formData = new FormData();
-            formData.append('image', imageInput.files[0]);
+        // Create FormData and append the image
+        const formData = new FormData();
+        formData.append('image', imageInput.files[0]);
 
-            const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
-            formData.append('csrfmiddlewaretoken', csrfToken);
+        try {
+            // Send the POST request to the Flask endpoint
+            const response = await fetch('/upload_image_to_flask/', {
+                method: 'POST',
+                body: formData,
+            });
 
-            try {
-       
-                const response = await fetch('/upload_image_to_flask/', {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRFToken': csrfToken  
-                    }
-                });
+            // Check if response is OK and handle JSON response
+            if (response.ok) {
+                const data = await response.json(); // Parse the JSON response
+                console.log('JSON Response:', data); // Debugging: log the full response
 
-    
-                const data = await response.json();
-
-                if (response.ok) {
-                    responseMessage.innerText = 'Medicines: ' + (data.medicines || 'No medicines found');
+                // Display the detected medicines or handle empty result
+                if (data.text) {
+                    responseMessage.innerText = 'Medicines: ' + data.text;
+                    console.log('Detected Medicines:', data.text); // Print detected text
                 } else {
-                    responseMessage.innerText = 'Error: ' + (data.error || 'An error occurred');
+                    responseMessage.innerText = data.medicines.text;
+                    // console.log('No medicines found in response.');
                 }
-            } catch (error) {
-                responseMessage.innerText = 'Error uploading image: ' + error.message;
+            } else {
+                // Handle non-200 responses
+                const data = await response.json();
+                responseMessage.innerText = 'Error: ' + (data.error || 'An error occurred');
+                console.error('Response Error:', data);
             }
-        });
+        } catch (error) {
+            // Handle network or other errors
+            responseMessage.innerText = 'Error uploading image: ' + error.message;
+            console.error('Fetch Error:', error);
+        }
     });
-
+});
 </script>
 
 {% endblock content %}
