@@ -173,3 +173,66 @@ def upload_image_to_flask(request):
     
     # If not POST method, return an error
     return JsonResponse({"error": "Invalid request method"}, status=405)
+
+
+import json
+
+@csrf_exempt
+def process_medicines(request):
+    if request.method == 'POST':
+        try:
+            # Parse the incoming JSON data
+            data = json.loads(request.body.decode('utf-8'))
+
+            # Extract the medicines data from the JSON
+            medicines_text = data.get('text', '')
+            
+            if not medicines_text:
+                return JsonResponse({'error': 'No medicines found in the input data.'}, status=400)
+
+            # Split the text into an array of medicines
+            medicines_array = [medicine.strip() for medicine in medicines_text.split(',')]
+
+            # Add medicines to the cart
+            if request.user.is_authenticated:
+                customer = request.user.customer
+                order, created = Order.objects.get_or_create(customer=customer, complete=False)
+
+                for medicine_name in medicines_array:
+                    try:
+                        product = Product.objects.get(name=medicine_name)
+                        orderItem, created = OrderItem.objects.get_or_create(order=order, product=product)
+                        orderItem.quantity = (orderItem.quantity + 1) if not created else 1
+                        orderItem.save()
+                    except Product.DoesNotExist:
+                        return JsonResponse({'error': f'Medicine "{medicine_name}" not found in the database.'}, status=400)
+            else:
+                # Handle guest cart update
+                cookie_data = cookieCart(request)
+                cart = cookie_data.get('cart', {})
+
+                for medicine_name in medicines_array:
+                    try:
+                        product = Product.objects.get(name=medicine_name)
+                        product_id = str(product.id)
+                        if product_id in cart:
+                            cart[product_id]['quantity'] += 1
+                        else:
+                            cart[product_id] = {'quantity': 1}
+                    except Product.DoesNotExist:
+                        return JsonResponse({'error': f'Medicine "{medicine_name}" not found in the database.'}, status=400)
+
+                response = JsonResponse({'message': 'Medicines processed successfully for guest cart.', 'medicines': medicines_array})
+                response.set_cookie('cart', json.dumps(cart))
+                return response
+
+            return JsonResponse({
+                'message': 'Medicines processed successfully.',
+                'medicines': medicines_array
+            })
+        except json.JSONDecodeError:
+            return JsonResponse({'error': 'Invalid JSON format.'}, status=400)
+        except Exception as e:
+            return JsonResponse({'error': str(e)}, status=500)
+    else:
+        return JsonResponse({'error': 'Invalid request method. Only POST requests are allowed.'}, status=405)
