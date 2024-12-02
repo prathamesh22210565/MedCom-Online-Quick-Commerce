@@ -154,7 +154,7 @@ def upload_image_to_flask(request):
    
         files = {'image': image_file}
 
-        ngrok_api_url = "https://dc5e-34-74-135-60.ngrok-free.app/ocr"
+        ngrok_api_url = "https://15bd-34-71-11-30.ngrok-free.app/ocr"
 
         try:
             # Send POST request to the Flask API with the image file
